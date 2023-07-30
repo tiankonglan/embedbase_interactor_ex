@@ -13,12 +13,13 @@ defmodule EmbedbaseInteractorEx do
   @default_retries 5
 
   require Logger
-  mix docs
+
   defp api_key() do
     value = System.fetch_env("api_key")
     value
   end
 
+  # Inserting Data
   def insert_data(dataset_id, data) when is_list(data) do
       url = "#{@api_url}/v1/#{dataset_id}"
       Enum.map(data, fn %{content: content, tag: tag} ->
@@ -41,11 +42,20 @@ defmodule EmbedbaseInteractorEx do
       ExHttp.http_post(url, body, api_key(), @default_retries)
   end
 
+  # Updating Data
+  def update_data(dataset_id, data, id) do
+     url = "#{@api_url}/v1/#{dataset_id}"
+     body = %{documents: [%{data: data, id: id}]}
+     ExHttp.http_post(url, body, api_key(), @default_retries)
+  end
+
+  # Using Bing Search
   def search_data(question, :bing) do
       url = "#{@api_url}/v1/internet-search"
       body = %{query: question, engine: "bing"}
       ExHttp.http_post(url, body, api_key(), @default_retries)
   end
+
 
   def search_data(dataset_id, question) do
       url = "#{@api_url}/v1/#{dataset_id}/search"
@@ -53,16 +63,15 @@ defmodule EmbedbaseInteractorEx do
       ExHttp.http_post(url, body, api_key(), @default_retries)
   end
 
-  def delete_dataset(dataset_id) do
-      url = "#{@api_url}/v1/#{dataset_id}/clear"
-      ExHttp.http_get(url, api_key(), @default_retries)
+  # Delete data
+  def delete_data(dataset_id) do
+      url = "#{@api_url}/v1/#{dataset_id}"
+      ExHttp.http_delete(url, api_key(), @default_retries)
   end
 
-  #     Retrieving Data
-  # Using Bing Search
-  # Inserting Data
-  # Updating Data
-  # Delete data
   # Delete dataset
-
+  def delete_dataset(dataset_id) do
+     url = "#{@api_url}/v1/#{dataset_id}/clear"
+     ExHttp.http_delete(url, api_key(), @default_retries)
+  end
 end
