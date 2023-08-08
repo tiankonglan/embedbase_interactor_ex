@@ -117,9 +117,9 @@ defmodule ExHttp do
     http_get(url, @retries)
   end
 
-  def http_delete(_url, retries) when retries == 0 do
-    {:error, "GET retires #{@retries} times and not success"}
-  end
+  # def http_delete(_url, retries) when retries == 0 do
+  #   {:error, "GET retires #{@retries} times and not success"}
+  # end
 
   def http_delete(url, token, retries) do
     url
@@ -132,7 +132,7 @@ defmodule ExHttp do
         headers: [
           {"User-Agent", @default_user_agent}
         ]
-    ]
+      ]
     )
     |> handle_response()
     |> case do
@@ -144,6 +144,34 @@ defmodule ExHttp do
       {:error, _} ->
         Process.sleep(500)
         http_delete(url, token, retries - 1)
+    end
+  end
+
+  def http_delete(url, data, token, retries) do
+    body = Poison.encode!(data)
+
+    # headers = Keyword.put_new(headers, :method, :delete)
+    options = [headers: [
+      {"User-Agent", @default_user_agent},
+      {"authorization", "Bearer #{token}"}
+    ],
+      body: body]
+
+    url
+    |> HTTPoison.request(
+      :delete,
+      options
+    )
+    |> handle_response()
+    |> case do
+      {:ok, body} ->
+        {:ok, body}
+
+      {:error, 404} ->
+        {:error, 404}
+      {:error, _} ->
+        Process.sleep(500)
+        http_delete(url, data, token, retries - 1)
     end
   end
 
