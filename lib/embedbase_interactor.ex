@@ -64,9 +64,10 @@ defmodule EmbedbaseInteractorEx do
   end
 
   # Delete data
-  def delete_data(dataset_id) do
+  def delete_data(dataset_id, ids) do
       url = "#{@api_url}/v1/#{dataset_id}"
-      ExHttp.http_delete(url, api_key(), @default_retries)
+      body = %{ids: ids}
+      ExHttp.http_delete(url, body, api_key(), @default_retries)
   end
 
   # Delete dataset

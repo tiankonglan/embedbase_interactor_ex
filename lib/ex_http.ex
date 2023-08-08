@@ -117,9 +117,9 @@ defmodule ExHttp do
     http_get(url, @retries)
   end
 
-  # def http_delete(_url, retries) when retries == 0 do
-  #   {:error, "GET retires #{@retries} times and not success"}
-  # end
+  def http_delete(_url, retries) when retries == 0 do
+    {:error, "GET retires #{@retries} times and not success"}
+  end
 
   def http_delete(url, token, retries) do
     url
