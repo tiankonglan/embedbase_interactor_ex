@@ -10,7 +10,7 @@ defmodule EmbedbaseInteractorTest do
   # end
 
   test "delete" do
-    EmbedbaseInteractorEx.delete_data('Test-amazon-product-reviews', "03655398-5a1f-49d9-9975-9608b8620e0f")
+    EmbedbaseInteractorEx.delete_data("Test-amazon-product-reviews", "03655398-5a1f-49d9-9975-9608b8620e0f")
     # IO.puts("result: #{result}")
     assert true == true
   end

@@ -150,17 +150,22 @@ defmodule ExHttp do
   def http_delete(url, data, token, retries) do
     body = Poison.encode!(data)
 
-    # headers = Keyword.put_new(headers, :method, :delete)
-    options = [headers: [
-      {"User-Agent", @default_user_agent},
-      {"authorization", "Bearer #{token}"}
-    ],
-      body: body]
+    # # headers = Keyword.put_new(headers, :method, :delete)
+    # options = [headers: [
+    #   {"User-Agent", @default_user_agent},
+    #   {"authorization", "Bearer #{token}"}
+    # ]]
 
-    url
-    |> HTTPoison.request(
-      :delete,
-      options
+    HTTPoison.request(
+        :delete,
+        url,
+        body,
+        [
+          {"User-Agent", @default_user_agent},
+          {"Content-Type", "application/json"},
+          {"authorization", "Bearer #{token}"}
+        ],
+        hackney: [headers: [{"User-Agent", @default_user_agent}]]
     )
     |> handle_response()
     |> case do
@@ -177,7 +182,7 @@ defmodule ExHttp do
 
   def http_delete(url, retries) do
     url
-    |> HTTPoison.get([{"User-Agent", @default_user_agent}],
+    |> HTTPoison.delete([{"User-Agent", @default_user_agent}],
       hackney: [headers: [{"User-Agent", @default_user_agent}]]
     )
     |> handle_response()
